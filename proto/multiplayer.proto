@@ -1,0 +1,39 @@
+syntax = "proto3";
+package multiplayer;
+option go_package = "proto/pb";
+
+message Request {
+  RequestType type = 1;
+
+  message JOIN {
+    string login = 1;
+    int64 mapId = 2;
+    int64 health = 3;
+    double startX = 4;
+    double startY = 5;
+  }
+  optional JOIN join = 2;
+
+  message GET {
+    string uuid = 1;
+    int64 health = 2;
+    double x = 3;
+    double y = 4;
+    double dx = 5;
+    double dy = 6;
+  }
+  optional GET get = 3;
+}
+
+enum RequestType {
+  JOIN = 0;
+  GET = 1;
+}
+
+message Response {
+  message JOIN {
+    bool ok = 1;
+    string uuid = 2;
+  }
+  optional JOIN join = 2;
+}

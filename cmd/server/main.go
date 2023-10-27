@@ -1,16 +1,20 @@
 package main
 
 import (
-	"github.com/golang/protobuf/proto"
 	"log"
 	"net"
+	"strconv"
 	"udp-multiplayer-go/internal/app"
 	"udp-multiplayer-go/internal/data"
 	"udp-multiplayer-go/proto/pb"
+
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
-	udpAddr, err := net.ResolveUDPAddr("udp", ":8080")
+	port := 8080
+
+	udpAddr, err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(port))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -20,10 +24,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	go app.ApiStart()
+	go app.ApiStart(3000)
 	go data.B2Init()
-	log.Println("API started on :3000")
-	log.Println("UDP server started on :8080")
+	log.Printf("UDP server started on :%v", port)
 
 	for {
 		var buf [512]byte

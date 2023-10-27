@@ -1,12 +1,13 @@
 package handle
 
 import (
-	"github.com/golang/protobuf/proto"
-	"github.com/google/uuid"
 	"log"
 	"net"
 	"udp-multiplayer-go/internal/data"
 	"udp-multiplayer-go/proto/pb"
+
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/proto"
 )
 
 func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
@@ -18,8 +19,8 @@ func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 		Health: int(req.Join.Health),
 		X:      req.Join.StartX,
 		Y:      req.Join.StartY,
-		Dx:     0.5,
-		Dy:     0.6,
+		Dx:     0.1,
+		Dy:     0.1,
 	}
 
 	data.JoinUser(int(req.Join.MapId), user)

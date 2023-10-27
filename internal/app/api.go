@@ -2,12 +2,13 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	data2 "udp-multiplayer-go/internal/data"
 )
 
-func ApiStart() {
+func ApiStart(port int) {
 	http.HandleFunc("/maps", func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(data2.Maps)
 		if err != nil {
@@ -17,9 +18,10 @@ func ApiStart() {
 		w.Write(data)
 	})
 
-	err := http.ListenAndServe(":3000", nil)
+	log.Printf("API started on :%v\n", port)
+	err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 		return
 	}
 }

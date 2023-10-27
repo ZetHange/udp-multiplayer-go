@@ -2,13 +2,23 @@ package main
 
 import (
 	"bufio"
-	"github.com/golang/protobuf/proto"
+	"flag"
 	"log"
 	"net"
 	"udp-multiplayer-go/proto/pb"
+
+	"google.golang.org/protobuf/proto"
+)
+
+var (
+	user = flag.String("user", "username", "Юзернейм")
+	dx   = flag.Float64("dx", 0.1, "Скорость по иксу")
+	dy   = flag.Float64("dy", 0.1, "Скорость по игрику")
 )
 
 func main() {
+	flag.Parse()
+
 	udpAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:8080")
 
 	if err != nil {
@@ -24,10 +34,10 @@ func main() {
 		Type: pb.RequestType_JOIN,
 		Get:  &pb.Request_GET{},
 		Join: &pb.Request_JOIN{
-			Login:  "zethange",
+			Login:  *user,
 			Health: 200,
-			StartX: 2,
-			StartY: 3,
+			StartX: 0,
+			StartY: 0,
 			MapId:  1,
 		},
 	})

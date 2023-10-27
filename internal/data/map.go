@@ -116,6 +116,11 @@ func (m *MapsType) UpdateUser(uuid string, x, y, dx, dy float64) {
 	user, _ := UserList.GetUserByUUID(uuid)
 
 	UserList.Lock()
+	user.Body.SetLinearVelocity(*box2d.NewB2Vec2(dx, dy))
+	user.Body.SetTransform(box2d.B2Vec2{
+		X: x,
+		Y: y,
+	}, user.Body.GetAngle())
 	user.X = x
 	user.Y = y
 	user.Dx = dx

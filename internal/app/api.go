@@ -9,10 +9,20 @@ import (
 )
 
 func ApiStart(port int) {
-	http.HandleFunc("/maps", func(w http.ResponseWriter, r *http.Request) {
-		data, err := json.Marshal(data2.Maps.Maps)
+	http.HandleFunc("/map", func(w http.ResponseWriter, r *http.Request) {
+		data, err := json.Marshal(&data2.MapList.MapList)
 		if err != nil {
 			log.Println(err)
+			return
+		}
+		w.Header().Add("Content-Type", "application/json")
+		w.Write(data)
+	})
+	http.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		data, err := json.Marshal(&data2.UserList.Users)
+		if err != nil {
+			log.Println(err)
+			return
 		}
 		w.Header().Add("Content-Type", "application/json")
 		w.Write(data)

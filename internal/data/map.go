@@ -2,34 +2,59 @@ package data
 
 import (
 	"sync"
+	"udp-multiplayer-go/proto/pb"
 
 	"github.com/E4/box2d"
 )
 
-type MapsType struct {
-	sync.RWMutex
-	Maps []*Map
+type Map struct {
+	Id    int            `json:"id"`
+	World *box2d.B2World `json:"-"`
+	Users []*User        `json:"users,omitempty"`
 }
 
-var Maps MapsType
+type MapsType struct {
+	sync.RWMutex
+	MapList []*Map
+}
+
+var MapList MapsType
+var UserList UserListType
 
 func (m *MapsType) GetMaps() []*Map {
 	m.RLock()
 	defer m.RUnlock()
 
-	return m.Maps
+	return m.MapList
 }
 
 func (m *MapsType) GetMapById(mapId int) (*Map, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
-	for _, world := range m.Maps {
+	for _, world := range m.MapList {
 		if world.Id == mapId {
 			return world, true
 		}
 	}
 	return nil, false
+}
+
+func (m *MapsType) ToProto(mapId int) []*pb.User {
+	var users []*pb.User
+	world, _ := m.GetMapById(mapId)
+	for _, user := range world.Users {
+		users = append(users, &pb.User{
+			Login:  user.Login,
+			Health: int64(user.Health),
+			X:      user.X,
+			Y:      user.Y,
+			Dx:     user.Dx,
+			Dy:     user.Dy,
+		})
+	}
+
+	return users
 }
 
 func (m *MapsType) JoinUser(mapId int, user *User) {
@@ -38,13 +63,16 @@ func (m *MapsType) JoinUser(mapId int, user *User) {
 	if ok {
 		body := CreateBodyFromUser(gettedMap.World, user)
 		user.Body = body
+
+		UserList.Users = append(UserList.Users, user)
 		gettedMap.Users = append(gettedMap.Users, user)
 	} else {
 		world := box2d.MakeB2World(box2d.MakeB2Vec2(0, 0))
 		body := CreateBodyFromUser(&world, user)
 		user.Body = body
 
-		Maps.Maps = append(Maps.Maps, &Map{
+		UserList.Users = append(UserList.Users, user)
+		MapList.MapList = append(MapList.MapList, &Map{
 			Id:    mapId,
 			World: &world,
 			Users: []*User{user},
@@ -73,6 +101,24 @@ func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {
 	return body
 }
 
-func UpdateUser(user *User) {
-	// TODO
+func (m *MapsType) GetMapIdByUserId(uuid string) int {
+	for _, world := range m.MapList {
+		for _, user := range world.Users {
+			if user.Id == uuid {
+				return world.Id
+			}
+		}
+	}
+	return 0
+}
+
+func (m *MapsType) UpdateUser(uuid string, x, y, dx, dy float64) {
+	user, _ := UserList.GetUserByUUID(uuid)
+
+	UserList.Lock()
+	user.X = x
+	user.Y = y
+	user.Dx = dx
+	user.Dy = dy
+	UserList.Unlock()
 }

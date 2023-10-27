@@ -16,19 +16,24 @@ func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	user := &data.User{
 		Id:     u.String(),
 		Login:  req.Join.Login,
-		Health: int(req.Join.Health),
-		X:      req.Join.StartX,
-		Y:      req.Join.StartY,
-		Dx:     0.1,
-		Dy:     0.1,
+		Health: 200,
+		X:      0,
+		Y:      0,
+		Dx:     0,
+		Dy:     0,
 	}
 
-	data.Maps.JoinUser(int(req.Join.MapId), user)
+	data.MapList.JoinUser(int(req.Join.MapId), user)
+
+	users := data.MapList.ToProto(int(req.Join.MapId))
 
 	data, err := proto.Marshal(&pb.Response{
 		Join: &pb.Response_JOIN{
 			Ok:   true,
 			Uuid: u.String(),
+		},
+		Get: &pb.Response_GET{
+			Users: users,
 		},
 	})
 	if err != nil {

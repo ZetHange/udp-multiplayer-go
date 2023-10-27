@@ -29,7 +29,7 @@ func main() {
 	log.Printf("UDP server started on :%v", port)
 
 	for {
-		var buf [512]byte
+		var buf [1024]byte
 		n, addr, err := conn.ReadFromUDP(buf[0:])
 		if err != nil {
 			log.Println(err)
@@ -42,6 +42,6 @@ func main() {
 			log.Println(err)
 			continue
 		}
-		app.Handle(&message, conn, addr)
+		app.HandleUdp(&message, conn, addr)
 	}
 }

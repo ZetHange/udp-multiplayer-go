@@ -1,6 +1,9 @@
 package data
 
-import "github.com/E4/box2d"
+import (
+	"github.com/E4/box2d"
+	"sync"
+)
 
 type User struct {
 	Id     string        `json:"id"`
@@ -13,8 +16,19 @@ type User struct {
 	Dy     float64       `json:"dy"`
 }
 
-type Map struct {
-	Id    int            `json:"id"`
-	World *box2d.B2World `json:"-"`
-	Users []*User        `json:"users,omitempty"`
+type UserListType struct {
+	sync.RWMutex
+	Users []*User
+}
+
+func (u *UserListType) GetUserByUUID(uuid string) (*User, bool) {
+	u.RLock()
+	defer u.RUnlock()
+
+	for _, user := range u.Users {
+		if user.Id == uuid {
+			return user, true
+		}
+	}
+	return nil, false
 }

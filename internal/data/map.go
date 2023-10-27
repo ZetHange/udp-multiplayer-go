@@ -6,33 +6,50 @@ import (
 	"github.com/E4/box2d"
 )
 
-var Maps []Map
-var m sync.RWMutex
+type MapsType struct {
+	sync.RWMutex
+	Maps []*Map
+}
 
-func JoinUser(mapId int, user *User) {
-	for _, world := range Maps {
+var Maps MapsType
+
+func (m *MapsType) GetMaps() []*Map {
+	m.RLock()
+	defer m.RUnlock()
+
+	return m.Maps
+}
+
+func (m *MapsType) GetMapById(mapId int) (*Map, bool) {
+	m.RLock()
+	defer m.RUnlock()
+
+	for _, world := range m.Maps {
 		if world.Id == mapId {
-			m.RLock()
-			body := CreateBodyFromUser(world.World, user)
-			user.Body = body
-			world.Users = append(world.Users, user)
-			m.RUnlock()
-
-			return
+			return world, true
 		}
 	}
+	return nil, false
+}
 
-	m.Lock()
-	world := box2d.MakeB2World(box2d.MakeB2Vec2(0, 0))
-	body := CreateBodyFromUser(&world, user)
-	user.Body = body
+func (m *MapsType) JoinUser(mapId int, user *User) {
+	gettedMap, ok := m.GetMapById(mapId)
 
-	Maps = append(Maps, Map{
-		Id:    mapId,
-		World: &world,
-		Users: []*User{user},
-	})
-	m.Unlock()
+	if ok {
+		body := CreateBodyFromUser(gettedMap.World, user)
+		user.Body = body
+		gettedMap.Users = append(gettedMap.Users, user)
+	} else {
+		world := box2d.MakeB2World(box2d.MakeB2Vec2(0, 0))
+		body := CreateBodyFromUser(&world, user)
+		user.Body = body
+
+		Maps.Maps = append(Maps.Maps, &Map{
+			Id:    mapId,
+			World: &world,
+			Users: []*User{user},
+		})
+	}
 }
 
 func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {

@@ -8,18 +8,18 @@ import (
 func B2Init() {
 	log.Println("Start loop box2d")
 	for {
-		for _, plan := range Maps {
-			plan := plan
-			go func() {
-				plan.World.Step(1.0/60.0, 6, 2)
+		for _, world := range Maps.GetMaps() {
+			world := world
+			func() {
+				world.World.Step(1.0/60.0, 6, 2)
 
-				for _, user := range plan.Users {
+				for _, user := range world.Users {
 					pos := user.Body.GetPosition()
 
-					m.Lock()
+					Maps.Lock()
 					user.X = pos.X
 					user.Y = pos.Y
-					m.Unlock()
+					Maps.Unlock()
 				}
 			}()
 		}

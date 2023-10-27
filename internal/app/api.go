@@ -10,7 +10,7 @@ import (
 
 func ApiStart(port int) {
 	http.HandleFunc("/maps", func(w http.ResponseWriter, r *http.Request) {
-		data, err := json.Marshal(data2.Maps)
+		data, err := json.Marshal(data2.Maps.Maps)
 		if err != nil {
 			log.Println(err)
 		}

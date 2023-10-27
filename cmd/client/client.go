@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	host = flag.String("host", "127.0.0.1:8080", "IP и порт UDP сервера")
 	user = flag.String("user", "username", "Юзернейм")
 	dx   = flag.Float64("dx", 0.1, "Скорость по иксу")
 	dy   = flag.Float64("dy", 0.1, "Скорость по игрику")
@@ -19,7 +20,7 @@ var (
 func main() {
 	flag.Parse()
 
-	udpAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:8080")
+	udpAddr, err := net.ResolveUDPAddr("udp", *host)
 
 	if err != nil {
 		log.Panicln(err)

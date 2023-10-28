@@ -34,17 +34,17 @@ func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {
 	bodyDef.Type = box2d.B2BodyType.B2_dynamicBody
 	bodyDef.Position.Set(user.X, user.Y)
 
-	dynamicBox := box2d.B2PolygonShape{}
-	dynamicBox.SetAsBox(1.0, 1.0)
+	body := world.CreateBody(&bodyDef)
+	body.SetLinearDamping(10)
+	circle := box2d.NewB2CircleShape()
+	circle.SetRadius(3)
 
 	fixtureDef := box2d.MakeB2FixtureDef()
-	fixtureDef.Shape = &dynamicBox
-	fixtureDef.Density = 1.0
-	fixtureDef.Friction = 0.3
+	fixtureDef.Shape = circle
+	fixtureDef.Density = 0.5
+	fixtureDef.Friction = 0
 
-	body := world.CreateBody(&bodyDef)
 	body.CreateFixture(fixtureDef.Shape, fixtureDef.Density)
-	body.SetUserData(user.Id)
 	body.SetLinearVelocity(box2d.B2Vec2{X: user.Dx, Y: user.Dy})
 
 	return body

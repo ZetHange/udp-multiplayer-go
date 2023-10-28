@@ -9,6 +9,18 @@ import (
 )
 
 func ApiStart(port int) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		data, err := json.Marshal(map[string]interface{}{
+			"rps": counter.c,
+		})
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		w.Header().Add("Content-Type", "application/json")
+		w.Write(data)
+	})
+
 	http.HandleFunc("/map", func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(&data2.MapList.MapList)
 		if err != nil {

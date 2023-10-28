@@ -25,6 +25,7 @@ func main() {
 	}
 
 	go app.ApiStart(3000)
+	go app.MetricsInit()
 	go data.B2Init()
 	log.Printf("UDP server started on :%v", port)
 

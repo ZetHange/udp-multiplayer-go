@@ -14,5 +14,8 @@ func HandleUdp(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	case pb.RequestType_JOIN:
 		handle.Join(req, conn, addr)
 		return
+	case pb.RequestType_LEAVE:
+		handle.Leave(req, conn, addr)
+		return
 	}
 }

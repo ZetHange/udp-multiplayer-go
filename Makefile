@@ -5,4 +5,4 @@ run client:
 build:
 	go build -o server -ldflags "-s -w" ./cmd/server/main.go
 grpc-build:	
-	protoc --go_out=. --go-grpc_out=. proto/multiplayer.proto
+	protoc --go_out=. proto/multiplayer.proto

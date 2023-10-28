@@ -23,7 +23,7 @@ func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 		Dy:     0,
 	}
 
-	data.MapList.JoinUser(int(req.Join.MapId), user)
+	data.JoinUser(int(req.Join.MapId), user)
 
 	users := data.MapList.ToProto(int(req.Join.MapId))
 

@@ -1,8 +1,9 @@
 package data
 
 import (
-	"github.com/E4/box2d"
 	"sync"
+
+	"github.com/E4/box2d"
 )
 
 type User struct {
@@ -31,4 +32,30 @@ func (u *UserListType) GetUserByUUID(uuid string) (*User, bool) {
 		}
 	}
 	return nil, false
+}
+
+func Leave(uuid string) bool {
+	_, ok := UserList.GetUserByUUID(uuid)
+	if !ok {
+		return ok
+	}
+
+	for _, world := range MapList.GetMaps() {
+		for i, user := range world.Users {
+			if user.Id == uuid {
+				world.World.DestroyBody(user.Body)
+				world.Users = append(world.Users[:i], world.Users[i+1:]...)
+				break
+			}
+		}
+	}
+
+	for i, user := range UserList.Users {
+		if user.Id == uuid {
+			UserList.Users = append(UserList.Users[:i], UserList.Users[i+1:]...)
+			break
+		}
+	}
+
+	return true
 }

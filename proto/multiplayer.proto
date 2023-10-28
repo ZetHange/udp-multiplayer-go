@@ -29,11 +29,17 @@ message Request {
     double dy = 6;
   }
   optional GET get = 3;
+
+  message LEAVE {
+    string uuid = 1;
+  }
+  optional LEAVE leave = 4;
 }
 
 enum RequestType {
   JOIN = 0;
   GET = 1;
+  LEAVE = 2;
 }
 
 message Response {
@@ -47,4 +53,9 @@ message Response {
     repeated User users = 1;
   }
   optional GET get = 2;
+
+  message LEAVE {
+    bool ok = 1;
+  }
+  optional LEAVE leave = 3;
 }

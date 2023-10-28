@@ -57,8 +57,8 @@ func (m *MapsType) ToProto(mapId int) []*pb.User {
 	return users
 }
 
-func (m *MapsType) JoinUser(mapId int, user *User) {
-	gettedMap, ok := m.GetMapById(mapId)
+func JoinUser(mapId int, user *User) {
+	gettedMap, ok := MapList.GetMapById(mapId)
 
 	if ok {
 		body := CreateBodyFromUser(gettedMap.World, user)
@@ -78,27 +78,6 @@ func (m *MapsType) JoinUser(mapId int, user *User) {
 			Users: []*User{user},
 		})
 	}
-}
-
-func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {
-	bodyDef := box2d.MakeB2BodyDef()
-	bodyDef.Type = box2d.B2BodyType.B2_dynamicBody
-	bodyDef.Position.Set(user.X, user.Y)
-
-	dynamicBox := box2d.B2PolygonShape{}
-	dynamicBox.SetAsBox(1.0, 1.0)
-
-	fixtureDef := box2d.MakeB2FixtureDef()
-	fixtureDef.Shape = &dynamicBox
-	fixtureDef.Density = 1.0
-	fixtureDef.Friction = 0.3
-
-	body := world.CreateBody(&bodyDef)
-	body.CreateFixture(fixtureDef.Shape, fixtureDef.Density)
-	body.SetUserData(user.Id)
-	body.SetLinearVelocity(box2d.B2Vec2{X: user.Dx, Y: user.Dy})
-
-	return body
 }
 
 func (m *MapsType) GetMapIdByUserId(uuid string) int {

@@ -17,6 +17,8 @@ message Request {
   message JOIN {
     string login = 1;
     int64 mapId = 2;
+    double startX = 3;
+    double startY = 4;
   }
   optional JOIN join = 2;
 

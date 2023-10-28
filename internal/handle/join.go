@@ -17,8 +17,8 @@ func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 		Id:     u.String(),
 		Login:  req.Join.Login,
 		Health: 200,
-		X:      0,
-		Y:      0,
+		X:      req.Join.StartX,
+		Y:      req.Join.StartY,
 		Dx:     0,
 		Dy:     0,
 	}

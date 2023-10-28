@@ -1,17 +1,18 @@
 package handle
 
 import (
-	"google.golang.org/protobuf/proto"
 	"log"
 	"net"
 	"udp-multiplayer-go/internal/data"
 	"udp-multiplayer-go/proto/pb"
+
+	"google.golang.org/protobuf/proto"
 )
 
 func HandleGet(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	get := req.Get
 
-	data.MapList.UpdateUser(get.Uuid, get.X, get.Y, get.Dx, get.Dy)
+	data.UpdateUser(get.Uuid, get.X, get.Y, get.Dx, get.Dy)
 
 	mapId := data.MapList.GetMapIdByUserId(get.Uuid)
 

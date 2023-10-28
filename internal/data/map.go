@@ -91,18 +91,21 @@ func (m *MapsType) GetMapIdByUserId(uuid string) int {
 	return 0
 }
 
-func (m *MapsType) UpdateUser(uuid string, x, y, dx, dy float64) {
+func UpdateUser(uuid string, x, y, dx, dy float64) {
 	user, _ := UserList.GetUserByUUID(uuid)
 
 	UserList.Lock()
-	user.Body.SetLinearVelocity(*box2d.NewB2Vec2(dx, dy))
-	user.Body.SetTransform(box2d.B2Vec2{
-		X: x,
-		Y: y,
-	}, user.Body.GetAngle())
-	user.X = x
-	user.Y = y
+
+	user.Body.ApplyLinearImpulse(box2d.B2Vec2{
+		X: user.Dx * 30.0,
+		Y: user.Dy * 30.0,
+	}, box2d.B2Vec2{
+		X: user.X,
+		Y: user.Y,
+	}, true)
+
 	user.Dx = dx
 	user.Dy = dy
+
 	UserList.Unlock()
 }

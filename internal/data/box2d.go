@@ -9,23 +9,28 @@ import (
 
 func B2Init() {
 	log.Println("Start loop box2d")
+	ticker := time.NewTicker(time.Millisecond * 20) // 20 миллисекунд = 1/60 секунды
+	defer ticker.Stop()
+
 	for {
-		for _, world := range MapList.GetMaps() {
-			world := world
-			func() {
-				world.World.Step(1.0/60.0, 6, 2)
+		select {
+		case <-ticker.C:
+			for _, world := range MapList.GetMaps() {
+				world := world
+				func() {
+					world.World.Step(1.0/60.0, 6, 2)
 
-				for _, user := range world.Users {
-					pos := user.Body.GetPosition()
+					for _, user := range world.Users {
+						pos := user.Body.GetPosition()
 
-					MapList.Lock()
-					user.X = pos.X
-					user.Y = pos.Y
-					MapList.Unlock()
-				}
-			}()
+						MapList.Lock()
+						user.X = pos.X
+						user.Y = pos.Y
+						MapList.Unlock()
+					}
+				}()
+			}
 		}
-		time.Sleep(20 * time.Millisecond)
 	}
 }
 
@@ -35,7 +40,6 @@ func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {
 	bodyDef.Position.Set(user.X, user.Y)
 
 	body := world.CreateBody(&bodyDef)
-	body.SetLinearDamping(10)
 	circle := box2d.NewB2CircleShape()
 	circle.SetRadius(3)
 
@@ -45,7 +49,6 @@ func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {
 	fixtureDef.Friction = 0
 
 	body.CreateFixture(fixtureDef.Shape, fixtureDef.Density)
-	body.SetLinearVelocity(box2d.B2Vec2{X: user.Dx, Y: user.Dy})
 
 	return body
 }

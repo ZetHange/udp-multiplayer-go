@@ -40,6 +40,7 @@ func CreateBodyFromUser(world *box2d.B2World, user *User) *box2d.B2Body {
 	bodyDef.Position.Set(user.X, user.Y)
 
 	body := world.CreateBody(&bodyDef)
+	body.SetLinearDamping(10)
 	circle := box2d.NewB2CircleShape()
 	circle.SetRadius(3)
 

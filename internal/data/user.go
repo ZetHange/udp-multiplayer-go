@@ -34,10 +34,10 @@ func (u *UserListType) GetUserByUUID(uuid string) (*User, bool) {
 	return nil, false
 }
 
-func Leave(uuid string) bool {
-	_, ok := UserList.GetUserByUUID(uuid)
+func Leave(uuid string) (*User, bool) {
+	user, ok := UserList.GetUserByUUID(uuid)
 	if !ok {
-		return ok
+		return nil, ok
 	}
 
 	for _, world := range MapList.GetMaps() {
@@ -57,5 +57,5 @@ func Leave(uuid string) bool {
 		}
 	}
 
-	return true
+	return user, ok
 }

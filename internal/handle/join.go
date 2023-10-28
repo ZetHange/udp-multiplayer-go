@@ -47,5 +47,5 @@ func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 		return
 	}
 
-	log.Printf("[id: %s] user <%s> connect to map %v", u.String(), req.Join.Login, req.Join.MapId)
+	log.Printf("[CONNECT](id: %s) User with login: %s joined to map %v", u.String(), req.Join.Login, req.Join.MapId)
 }

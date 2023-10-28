@@ -12,7 +12,7 @@ import (
 func Leave(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	uuid := req.Leave.GetUuid()
 
-	ok := data.Leave(uuid)
+	user, ok := data.Leave(uuid)
 
 	data, err := proto.Marshal(&pb.Response{
 		Leave: &pb.Response_LEAVE{
@@ -24,4 +24,6 @@ func Leave(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	}
 
 	conn.Write(data)
+
+	log.Printf("[DISCONNECT](id: %s) User with login: %s disconnected from map", uuid, user.Login)
 }

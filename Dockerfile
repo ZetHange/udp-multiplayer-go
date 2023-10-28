@@ -1,4 +1,4 @@
-FROM golang:alpine3.18 as builder
+FROM --platform=$TARGETPLATFORM golang:alpine3.18 as builder
 
 WORKDIR /app
 
@@ -8,6 +8,6 @@ RUN go mod download
 COPY . .
 RUN go build -o server -ldflags "-s -w" ./cmd/server/main.go
 
-FROM scratch
+FROM --platform=$TARGETPLATFORM scratch
 COPY --from=builder ./app/server ./server
 CMD ["./server"]

@@ -3,7 +3,9 @@ package handle
 import (
 	"log"
 	"net"
+	"time"
 	"udp-multiplayer-go/internal/data"
+	"udp-multiplayer-go/internal/utils"
 	"udp-multiplayer-go/proto/pb"
 
 	"google.golang.org/protobuf/proto"
@@ -12,7 +14,14 @@ import (
 func HandleGet(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	get := req.Get
 
-	data.UpdateUser(get.Uuid, get.X, get.Y, get.Dx, get.Dy)
+	utils.Oko.Lock()
+	utils.Oko.Users[get.Uuid] = time.Now()
+	utils.Oko.Unlock()
+
+	ok := data.UpdateUser(get.Uuid, get.X, get.Y, get.Dx, get.Dy)
+	if !ok {
+		return
+	}
 
 	mapId := data.MapList.GetMapIdByUserId(get.Uuid)
 

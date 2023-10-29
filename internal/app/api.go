@@ -23,6 +23,7 @@ func ApiStart(port int) {
 
 	http.HandleFunc("/map", func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(&data2.MapList.MapList)
+
 		if err != nil {
 			log.Println(err)
 			return

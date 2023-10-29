@@ -23,8 +23,8 @@ type UserListType struct {
 }
 
 func (u *UserListType) GetUserByUUID(uuid string) (*User, bool) {
-	u.RLock()
-	defer u.RUnlock()
+	u.Lock()
+	defer u.Unlock()
 
 	for _, user := range u.Users {
 		if user.Id == uuid {

@@ -6,8 +6,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"os"
+	"time"
 	"udp-multiplayer-go/proto/pb"
 
 	"google.golang.org/protobuf/proto"
@@ -15,7 +17,7 @@ import (
 
 var (
 	host        = flag.String("host", "127.0.0.1:8080", "IP и порт UDP сервера")
-	typeconnect = flag.String("type", "default", "Тип клиента: default, leave")
+	typeconnect = flag.String("type", "default", "Тип клиента: default, leave, auto")
 	uuid        = flag.String("uuid", "", "uuid для leave")
 	// mapId = flag.Int64("mapId", 1, "ID карты, целочисленный")
 	// user  = flag.String("user", "username", "Юзернейм")
@@ -92,6 +94,29 @@ func main() {
 		log.Panicln(err)
 	}
 	fmt.Println(string(content))
+
+	if *typeconnect == "auto" {
+		for {
+			req, _ := proto.Marshal(&pb.Request{
+				Type: pb.RequestType_GET,
+				Get: &pb.Request_GET{
+					Uuid:   uuid,
+					Health: 200,
+					X:      rand.Float64(),
+					Y:      rand.Float64(),
+					Dx:     rand.Float64(),
+					Dy:     rand.Float64(),
+				},
+			})
+
+			_, err = conn.Write(req)
+			if err != nil {
+				log.Println(err)
+			}
+
+			time.Sleep(20 * time.Millisecond)
+		}
+	}
 
 	for {
 		fmt.Print("Press ENTER для отправки данных")

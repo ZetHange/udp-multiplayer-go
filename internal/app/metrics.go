@@ -28,7 +28,7 @@ func MetricsInit() {
 				counter.Unlock()
 			case <-counter.requests:
 				counter.Lock()
-				counter.c++
+				counter.c += 1
 				counter.Unlock()
 			}
 		}

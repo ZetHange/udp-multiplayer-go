@@ -91,8 +91,11 @@ func (m *MapsType) GetMapIdByUserId(uuid string) int {
 	return 0
 }
 
-func UpdateUser(uuid string, x, y, dx, dy float64) {
-	user, _ := UserList.GetUserByUUID(uuid)
+func UpdateUser(uuid string, x, y, dx, dy float64) bool {
+	user, ok := UserList.GetUserByUUID(uuid)
+	if !ok {
+		return false
+	}
 
 	UserList.Lock()
 
@@ -108,4 +111,5 @@ func UpdateUser(uuid string, x, y, dx, dy float64) {
 	user.Dy = dy
 
 	UserList.Unlock()
+	return true
 }

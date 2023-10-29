@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"udp-multiplayer-go/internal/app"
 	"udp-multiplayer-go/internal/data"
+	"udp-multiplayer-go/internal/utils"
 	"udp-multiplayer-go/proto/pb"
 
 	"google.golang.org/protobuf/proto"
@@ -26,6 +27,7 @@ func main() {
 
 	go app.ApiStart(3000)
 	go app.MetricsInit()
+	go utils.InitOko()
 	go data.B2Init()
 	log.Printf("UDP server started on :%v", port)
 

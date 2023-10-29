@@ -11,7 +11,7 @@ import (
 func ApiStart(port int) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(map[string]interface{}{
-			"rps": counter.c,
+			"rps": LastRPS,
 		})
 		if err != nil {
 			log.Println(err)

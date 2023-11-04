@@ -18,14 +18,14 @@ func HandleGet(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	utils.Oko.Users[get.Uuid] = time.Now()
 	utils.Oko.Unlock()
 
-	ok := data.UpdateUser(get.Uuid, get.X, get.Y, get.Dx, get.Dy)
+	ok := data.UpdateUser(get.Uuid, get.Dx, get.Dy)
 	if !ok {
 		return
 	}
 
 	mapId := data.MapList.GetMapIdByUserId(get.Uuid)
 
-	users := data.MapList.ToProto(mapId)
+	users := data.MapList.ToPb(mapId)
 
 	data, err := proto.Marshal(&pb.Response{
 		Get: &pb.Response_GET{

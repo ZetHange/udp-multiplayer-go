@@ -19,13 +19,23 @@ type MapsType struct {
 }
 
 var MapList MapsType
-var UserList UserListType
 
 func (m *MapsType) GetMaps() []*Map {
 	m.RLock()
 	defer m.RUnlock()
 
 	return m.MapList
+}
+
+func (m *MapsType) GetMapIdByUserId(uuid string) int {
+	for _, world := range m.MapList {
+		for _, user := range world.Users {
+			if user.Id == uuid {
+				return world.Id
+			}
+		}
+	}
+	return 0
 }
 
 func (m *MapsType) GetMapById(mapId int) (*Map, bool) {
@@ -40,7 +50,7 @@ func (m *MapsType) GetMapById(mapId int) (*Map, bool) {
 	return nil, false
 }
 
-func (m *MapsType) ToProto(mapId int) []*pb.User {
+func (m *MapsType) ToPb(mapId int) []*pb.User {
 	var users []*pb.User
 	world, _ := m.GetMapById(mapId)
 	for _, user := range world.Users {
@@ -78,38 +88,4 @@ func JoinUser(mapId int, user *User) {
 			Users: []*User{user},
 		})
 	}
-}
-
-func (m *MapsType) GetMapIdByUserId(uuid string) int {
-	for _, world := range m.MapList {
-		for _, user := range world.Users {
-			if user.Id == uuid {
-				return world.Id
-			}
-		}
-	}
-	return 0
-}
-
-func UpdateUser(uuid string, x, y, dx, dy float64) bool {
-	user, ok := UserList.GetUserByUUID(uuid)
-	if !ok {
-		return false
-	}
-
-	UserList.Lock()
-
-	user.Body.ApplyLinearImpulse(box2d.B2Vec2{
-		X: user.Dx * 30.0,
-		Y: user.Dy * 30.0,
-	}, box2d.B2Vec2{
-		X: user.X,
-		Y: user.Y,
-	}, true)
-
-	user.Dx = dx
-	user.Dy = dy
-
-	UserList.Unlock()
-	return true
 }

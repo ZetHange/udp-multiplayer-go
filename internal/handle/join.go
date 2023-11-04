@@ -25,7 +25,7 @@ func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 
 	data.JoinUser(int(req.Join.MapId), user)
 
-	users := data.MapList.ToProto(int(req.Join.MapId))
+	users := data.MapList.ToPb(int(req.Join.MapId))
 
 	data, err := proto.Marshal(&pb.Response{
 		Join: &pb.Response_JOIN{

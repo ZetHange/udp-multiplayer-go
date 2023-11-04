@@ -22,6 +22,8 @@ type UserListType struct {
 	Users []*User
 }
 
+var UserList UserListType
+
 func (u *UserListType) GetUserByUUID(uuid string) (*User, bool) {
 	u.Lock()
 	defer u.Unlock()
@@ -32,6 +34,29 @@ func (u *UserListType) GetUserByUUID(uuid string) (*User, bool) {
 		}
 	}
 	return nil, false
+}
+
+func UpdateUser(uuid string, dx, dy float64) bool {
+	user, ok := UserList.GetUserByUUID(uuid)
+	if !ok {
+		return false
+	}
+
+	UserList.Lock()
+
+	user.Body.ApplyLinearImpulse(box2d.B2Vec2{
+		X: user.Dx * 30.0,
+		Y: user.Dy * 30.0,
+	}, box2d.B2Vec2{
+		X: user.X,
+		Y: user.Y,
+	}, true)
+
+	user.Dx = dx
+	user.Dy = dy
+
+	UserList.Unlock()
+	return true
 }
 
 func Leave(uuid string) (*User, bool) {

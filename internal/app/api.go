@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	data2 "udp-multiplayer-go/internal/data"
+	"udp-multiplayer-go/internal/data"
+	"udp-multiplayer-go/internal/utils"
 )
 
 func ApiStart(port int) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(map[string]interface{}{
-			"rps": LastRPS,
+			"stats": &Metrics,
+			"maps":  data.MapList.GetMaps(),
+			"users": &data.UserList.Users,
+			"oko":   &utils.Oko.Users,
 		})
 		if err != nil {
 			log.Println(err)
@@ -22,7 +26,7 @@ func ApiStart(port int) {
 	})
 
 	http.HandleFunc("/map", func(w http.ResponseWriter, r *http.Request) {
-		data, err := json.Marshal(&data2.MapList.MapList)
+		data, err := json.Marshal(&data.MapList.MapList)
 
 		if err != nil {
 			log.Println(err)
@@ -32,7 +36,7 @@ func ApiStart(port int) {
 		w.Write(data)
 	})
 	http.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
-		data, err := json.Marshal(&data2.UserList.Users)
+		data, err := json.Marshal(&data.UserList.Users)
 		if err != nil {
 			log.Println(err)
 			return

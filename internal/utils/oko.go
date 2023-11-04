@@ -24,9 +24,10 @@ func InitOko() {
 		Oko.Lock()
 		for key, value := range Oko.Users {
 			duration := time.Since(value)
-			if duration >= time.Second*5 {
+			if duration >= time.Second*15 {
 				user, ok := data.Leave(key)
 				if ok {
+					delete(Oko.Users, key)
 					log.Printf("[AUTODISCONNECT](id: %s) User with login: %s autodisconnected from map", user.Id, user.Login)
 				}
 			}

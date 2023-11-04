@@ -4,6 +4,7 @@ import (
 	"log"
 	"sync"
 	"time"
+	"udp-multiplayer-go/internal/data"
 )
 
 type Counter struct {
@@ -15,7 +16,14 @@ type Counter struct {
 var counter = Counter{
 	requests: make(chan int),
 }
-var LastRPS int64
+
+type metrics struct {
+	sync.Mutex
+	Rps        int64 `json:"rps"`
+	TotalUsers int64 `json:"total_users"`
+}
+
+var Metrics metrics
 
 func MetricsInit() {
 	log.Println("Start metrics")
@@ -36,7 +44,12 @@ func MetricsInit() {
 	go func() {
 		for {
 			counter.Lock()
-			LastRPS = counter.c
+			Metrics.Rps = counter.c
+
+			data.UserList.Lock()
+			Metrics.TotalUsers = int64(len(data.UserList.Users))
+			data.UserList.Unlock()
+
 			counter.c = 0
 			counter.Unlock()
 

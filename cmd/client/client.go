@@ -19,6 +19,7 @@ var (
 	host        = flag.String("host", "127.0.0.1:8080", "IP и порт UDP сервера")
 	typeconnect = flag.String("type", "default", "Тип клиента: default, leave, auto")
 	uuid        = flag.String("uuid", "", "uuid для leave")
+	count       = flag.Int64("count", 1, "кол-во соединений")
 	// mapId = flag.Int64("mapId", 1, "ID карты, целочисленный")
 	// user  = flag.String("user", "username", "Юзернейм")
 	// dx    = flag.Float64("dx", 0.1, "Скорость по иксу")

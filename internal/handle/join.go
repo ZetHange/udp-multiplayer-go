@@ -3,7 +3,9 @@ package handle
 import (
 	"log"
 	"net"
+	"time"
 	"udp-multiplayer-go/internal/data"
+	"udp-multiplayer-go/internal/utils"
 	"udp-multiplayer-go/proto/pb"
 
 	"github.com/google/uuid"
@@ -12,6 +14,10 @@ import (
 
 func Join(req *pb.Request, conn *net.UDPConn, addr *net.UDPAddr) {
 	u, _ := uuid.NewRandom()
+
+	utils.Oko.Lock()
+	utils.Oko.Users[u.String()] = time.Now()
+	utils.Oko.Unlock()
 
 	user := &data.User{
 		Id:     u.String(),
